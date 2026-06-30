@@ -13,6 +13,7 @@ import {
   type DragEndEvent,
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
+import { mutate } from "swr";
 import type { CategoryDTO, ColumnDTO, TaskDTO, UserDTO } from "@/lib/types";
 import { TaskCard } from "./TaskCard";
 import { BoardColumn } from "./BoardColumn";
@@ -125,9 +126,15 @@ export function Board({ columns, categories, initialTasks, users }: Props) {
         body: JSON.stringify({ columnId: to, position: Math.max(0, finalIndex) }),
       });
       if (!res.ok) throw new Error("save failed");
+      refreshCache();
     } catch {
       setTasks(snapshot.current); // revert
     }
+  }
+
+  // Keep the SWR board cache in sync so returning to the board shows the latest.
+  function refreshCache() {
+    mutate("/api/board");
   }
 
   function upsertTask(updated: TaskDTO) {
@@ -135,12 +142,14 @@ export function Board({ columns, categories, initialTasks, users }: Props) {
       const exists = prev.some((t) => t.id === updated.id);
       return exists ? prev.map((t) => (t.id === updated.id ? updated : t)) : [...prev, updated];
     });
+    refreshCache();
   }
 
   // Remove a task from the board (used by both delete and archive — archived
   // tasks simply leave the board view).
   function removeTask(id: string) {
     setTasks((prev) => prev.filter((t) => t.id !== id));
+    refreshCache();
     setOpenTaskId(null);
   }
 
