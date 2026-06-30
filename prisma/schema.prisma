@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // Pooled connection for the app (serverless-safe). On Neon this is the "-pooler" URL.
+  url       = env("DATABASE_URL")
+  // Direct (unpooled) connection, used only for migrations.
+  directUrl = env("DIRECT_URL")
+}
+
+enum Priority {
+  P0
+  P1
+  P2
+  P3
+}
+
+enum LinkKind {
+  GITHUB
+  URL
+}
+
+model User {
+  id           String         @id @default(cuid())
+  name         String         @unique
+  passwordHash String
+  avatarColor  String         @default("#64748b")
+  createdAt    DateTime       @default(now())
+
+  createdTasks Task[]         @relation("TaskCreatedBy")
+  assignments  TaskAssignee[]
+  notes        Note[]
+}
+
+model Column {
+  id       String @id @default(cuid())
+  name     String
+  color    String @default("#475569")
+  position Int
+
+  tasks Task[]
+
+  @@index([position])
+}
+
+model Category {
+  id       String @id @default(cuid())
+  name     String
+  color    String @default("#0ea5e9")
+  position Int
+
+  tasks Task[]
+
+  @@index([position])
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  priority    Priority  @default(P2)
+  position    Int       @default(0)
+  startDate   DateTime?
+  dueDate     DateTime?
+
+  // Set when the task enters the completion (last) column; cleared when it leaves.
+  completedAt DateTime?
+  // Set when the task is auto-archived; archived tasks are hidden from the board.
+  archivedAt  DateTime?
+
+  columnId   String
+  column     Column   @relation(fields: [columnId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  createdById String?
+  createdBy   User?   @relation("TaskCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+
+  assignees TaskAssignee[]
+  notes     Note[]
+  links     Link[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([columnId, categoryId, position])
+  @@index([archivedAt])
+}
+
+// Simple key/value store for board-wide configuration (e.g. archiveAfterDays).
+model Setting {
+  key   String @id
+  value String
+}
+
+model TaskAssignee {
+  taskId String
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([taskId, userId])
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  body      String
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  authorId  String?
+  author    User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+
+  @@index([taskId, createdAt])
+}
+
+model Link {
+  id     String   @id @default(cuid())
+  url    String
+  label  String?
+  kind   LinkKind @default(URL)
+  taskId String
+  task   Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+}
