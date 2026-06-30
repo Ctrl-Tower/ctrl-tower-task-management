@@ -117,7 +117,6 @@ function UserRow({
   onDelete: () => void;
 }) {
   const [name, setName] = useState(user.name);
-  const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
 
   async function save() {
@@ -126,7 +125,7 @@ function UserRow({
       const res = await fetch(`/api/users/${user.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, password: password || undefined }),
+        body: JSON.stringify({ name }),
       });
       if (res.ok) onSaved(await res.json());
     } finally {
@@ -150,16 +149,15 @@ function UserRow({
       </div>
 
       {editing && (
-        <div className="mt-3 grid gap-3 border-t border-slate-800 pt-3 sm:grid-cols-2">
+        <div className="mt-3 grid gap-3 border-t border-slate-800 pt-3">
           <div>
             <label className="label">Full name</label>
             <input className="input" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
+          <p className="text-xs text-slate-500">
+            Passwords can only be changed by each person themselves — from their own account menu (top-right).
+          </p>
           <div>
-            <label className="label">New password</label>
-            <input className="input" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="leave blank to keep" />
-          </div>
-          <div className="sm:col-span-2">
             <button onClick={save} disabled={busy} className="btn-primary text-xs">
               {busy ? "Saving…" : "Save changes"}
             </button>

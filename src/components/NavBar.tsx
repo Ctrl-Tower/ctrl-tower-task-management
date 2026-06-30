@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Avatar } from "@/components/ui/Avatar";
+import { AccountModal } from "@/components/AccountModal";
 import type { UserDTO } from "@/lib/types";
 
 const LINKS = [
@@ -15,6 +17,7 @@ const LINKS = [
 export function NavBar({ user }: { user: UserDTO }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [accountOpen, setAccountOpen] = useState(false);
 
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -49,14 +52,20 @@ export function NavBar({ user }: { user: UserDTO }) {
         </nav>
       </div>
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2">
+        <button
+          onClick={() => setAccountOpen(true)}
+          className="flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-slate-800"
+          title="Account & password"
+        >
           <Avatar user={user} size={28} />
           <span className="hidden text-sm text-slate-300 sm:block">{user.name}</span>
-        </div>
+        </button>
         <button onClick={logout} className="btn-ghost text-xs">
           Sign out
         </button>
       </div>
+
+      {accountOpen && <AccountModal user={user} onClose={() => setAccountOpen(false)} />}
     </header>
   );
 }

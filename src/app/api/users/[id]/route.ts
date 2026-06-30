@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { requireSession, hashPassword, UnauthorizedError } from "@/lib/auth";
+import { requireSession, UnauthorizedError } from "@/lib/auth";
 
 type Ctx = { params: Promise<{ id: string }> };
 
-// PATCH /api/users/[id] — update name/email/color/password.
+// PATCH /api/users/[id] — update a team member's name/colour.
+// Passwords are NOT changeable here — each user changes their own via
+// /api/auth/change-password, so no one can alter someone else's password.
 export async function PATCH(req: NextRequest, { params }: Ctx) {
   try {
     await requireSession();
@@ -14,11 +16,6 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
     const data: any = {};
     if (typeof body.name === "string" && body.name.trim()) data.name = body.name.trim();
     if (typeof body.avatarColor === "string") data.avatarColor = body.avatarColor;
-    if (typeof body.password === "string" && body.password) {
-      if (body.password.length < 8)
-        return NextResponse.json({ error: "Password must be at least 8 characters" }, { status: 400 });
-      data.passwordHash = await hashPassword(body.password);
-    }
     const user = await prisma.user.update({ where: { id }, data });
     return NextResponse.json({ id: user.id, name: user.name, avatarColor: user.avatarColor });
   } catch (e) {
