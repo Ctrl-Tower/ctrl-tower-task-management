@@ -19,6 +19,7 @@ import { TaskCard } from "./TaskCard";
 import { BoardColumn } from "./BoardColumn";
 import { TaskModal } from "@/components/task/TaskModal";
 import { CreateTaskModal } from "@/components/task/CreateTaskModal";
+import { ImportModal } from "@/components/import/ImportModal";
 
 export const colDropId = (columnId: string) => `col:${columnId}`;
 const parseCol = (id: string) => id.replace(/^col:/, "");
@@ -35,6 +36,7 @@ export function Board({ columns, categories, initialTasks, users }: Props) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
   const [createCol, setCreateCol] = useState<string | null>(null);
+  const [importOpen, setImportOpen] = useState(false);
   const snapshot = useRef<TaskDTO[]>(initialTasks);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
@@ -157,7 +159,16 @@ export function Board({ columns, categories, initialTasks, users }: Props) {
   const openTask = openTaskId ? tasks.find((t) => t.id === openTaskId) : null;
 
   return (
-    <div className="h-full overflow-x-auto bg-slate-950 p-3">
+    <div className="flex h-full flex-col gap-2 bg-slate-950 p-3">
+      <div className="flex shrink-0 items-center justify-end">
+        <button
+          onClick={() => setImportOpen(true)}
+          className="btn-ghost border border-slate-700 text-xs"
+        >
+          Import from Granola
+        </button>
+      </div>
+
       <DndContext
         id="task-board"
         sensors={sensors}
@@ -166,17 +177,19 @@ export function Board({ columns, categories, initialTasks, users }: Props) {
         onDragOver={onDragOver}
         onDragEnd={onDragEnd}
       >
-        <div className="flex h-full min-w-max gap-3">
-          {columns.map((col) => (
-            <BoardColumn
-              key={col.id}
-              column={col}
-              tasks={grouped.get(col.id) ?? []}
-              categoryName={categoryName}
-              onOpenTask={setOpenTaskId}
-              onStartAdd={() => setCreateCol(col.id)}
-            />
-          ))}
+        <div className="min-h-0 flex-1 overflow-x-auto">
+          <div className="flex h-full min-w-max gap-3">
+            {columns.map((col) => (
+              <BoardColumn
+                key={col.id}
+                column={col}
+                tasks={grouped.get(col.id) ?? []}
+                categoryName={categoryName}
+                onOpenTask={setOpenTaskId}
+                onStartAdd={() => setCreateCol(col.id)}
+              />
+            ))}
+          </div>
         </div>
 
         <DragOverlay>
@@ -185,6 +198,10 @@ export function Board({ columns, categories, initialTasks, users }: Props) {
           ) : null}
         </DragOverlay>
       </DndContext>
+
+      {importOpen && (
+        <ImportModal columns={columns} categories={categories} onClose={() => setImportOpen(false)} />
+      )}
 
       {createCol && (
         <CreateTaskModal

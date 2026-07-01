@@ -53,11 +53,14 @@ Sign in with the seeded admin (defaults: `admin@ctrltower.local` / `changeme123`
 
 ## Usage
 
-- **Board** — drag cards across columns and swimlanes; click a card to open it;
-  hover a cell and hit **+ Add** to create a task there.
-- **Team** — create / edit / delete team members. Everyone signed in can do this
-  (single role by design).
-- **Settings** — rename, recolor, reorder, add, or delete columns & categories.
+- **Board** — drag cards across columns; click a card to open it; **+ Add task**
+  at the bottom of a column to create one.
+- **Import from Granola** — button on the board. Paste a Granola share link (or the
+  note text) and Claude extracts the clear action items; review, then create. Assigns
+  a person only when the note names a known teammate. Needs `ANTHROPIC_API_KEY`.
+- **Team** — create team members; everyone manages only their own name/password
+  (from the account menu, top-right).
+- **Settings** — categories, the priority legend, and the auto-archive threshold.
 
 ## Deployment
 
@@ -104,4 +107,5 @@ On Railway: add a Postgres service, set `JWT_SECRET`, and point `DATABASE_URL`
 | `DATABASE_URL` | Postgres connection (pooled on Neon) — used by the app |
 | `DATABASE_URL_UNPOOLED` | Direct/unpooled Postgres connection — used for migrations |
 | `JWT_SECRET` | Secret for signing session cookies (`openssl rand -base64 32`) |
+| `ANTHROPIC_API_KEY` | Anthropic key for the Granola importer (server-side only). Optional — importer is disabled if unset. |
 | `SEED_USER_NAME` / `SEED_USER_PASSWORD` | First user, used by the seed script |
