@@ -11,8 +11,6 @@ interface Proposal {
   columnId: string;
   categoryId: string;
   dueDate: string;
-  parentId: string;
-  parentTitle: string;
   assigneeIds: string[];
   selected: boolean;
 }
@@ -58,8 +56,6 @@ export function ImportModal({ onClose }: { onClose: () => void }) {
         columnId: t.columnId || columns[0]?.id || "",
         categoryId: t.categoryId || categories[0]?.id || "",
         dueDate: t.dueDate ?? "",
-        parentId: t.parentId ?? "",
-        parentTitle: t.parentTitle ?? "",
         assigneeIds: t.assigneeIds ?? [],
         selected: true,
       })));
@@ -95,25 +91,24 @@ export function ImportModal({ onClose }: { onClose: () => void }) {
     if (chosen.length === 0) return;
     setCreating(true);
     try {
-      for (const t of chosen) {
+      for (const p of chosen) {
         const res = await fetch("/api/tasks", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            title: t.title.trim(),
-            columnId: t.columnId || columns[0]?.id,
-            categoryId: t.categoryId || categories[0]?.id,
-            priority: t.priority,
-            dueDate: t.dueDate || null,
-            parentId: t.parentId || null,
+            title: p.title.trim(),
+            columnId: p.columnId || columns[0]?.id,
+            categoryId: p.categoryId || categories[0]?.id,
+            priority: p.priority,
+            dueDate: p.dueDate || null,
           }),
         });
-        if (res.ok && t.assigneeIds.length > 0) {
+        if (res.ok && p.assigneeIds.length > 0) {
           const created = await res.json();
           await fetch(`/api/tasks/${created.id}/assignees`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userIds: t.assigneeIds }),
+            body: JSON.stringify({ userIds: p.assigneeIds }),
           });
         }
       }
@@ -177,9 +172,6 @@ export function ImportModal({ onClose }: { onClose: () => void }) {
                       onChange={(e) => update(i, { title: e.target.value })}
                       className="w-full bg-transparent text-sm font-medium text-neutral-100 focus:outline-none"
                     />
-                    {t.parentTitle && (
-                      <p className="truncate text-[11px] text-neutral-500">↳ subtask of “{t.parentTitle}”</p>
-                    )}
                     <div className="flex flex-wrap items-center gap-2">
                       <select
                         value={t.columnId}

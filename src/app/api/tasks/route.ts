@@ -39,7 +39,6 @@ export async function POST(req: NextRequest) {
         priority: body.priority || "P2",
         columnId: body.columnId,
         categoryId: body.categoryId,
-        parentId: typeof body.parentId === "string" && body.parentId ? body.parentId : null,
         position,
         dueDate,
         createdById: user.id,

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { NavBar } from "@/components/NavBar";
+import { BoardPrefsProvider } from "@/components/board/board-prefs";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
@@ -14,9 +15,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const dto = { id: user.id, name: user.name, avatarColor: user.avatarColor };
 
   return (
-    <div className="flex h-screen flex-col">
-      <NavBar user={dto} />
-      <main className="min-h-0 flex-1 overflow-hidden">{children}</main>
-    </div>
+    <BoardPrefsProvider>
+      <div className="flex h-screen flex-col">
+        <NavBar user={dto} />
+        <main className="min-h-0 flex-1 overflow-hidden">{children}</main>
+      </div>
+    </BoardPrefsProvider>
   );
 }

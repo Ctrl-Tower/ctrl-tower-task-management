@@ -35,34 +35,15 @@ export function Board({ columns, categories, initialTasks, users }: Props) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
   const [createCol, setCreateCol] = useState<string | null>(null);
-  const [subParent, setSubParent] = useState<TaskDTO | null>(null);
   const snapshot = useRef<TaskDTO[]>(initialTasks);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
-  const columnName = useCallback(
-    (id: string) => columns.find((c) => c.id === id)?.name ?? "",
-    [columns],
-  );
-
-  // Children keyed by parent id (subtasks don't render as their own column cards).
-  const childrenByParent = useMemo(() => {
-    const map = new Map<string, TaskDTO[]>();
-    for (const t of tasks) {
-      if (!t.parentId) continue;
-      if (!map.has(t.parentId)) map.set(t.parentId, []);
-      map.get(t.parentId)!.push(t);
-    }
-    for (const list of map.values()) list.sort((a, b) => a.position - b.position);
-    return map;
-  }, [tasks]);
-
-  // Top-level tasks grouped by column, sorted by position.
+  // tasks grouped by column, sorted by position
   const grouped = useMemo(() => {
     const map = new Map<string, TaskDTO[]>();
     for (const col of columns) map.set(col.id, []);
     for (const t of tasks) {
-      if (t.parentId) continue;
       if (!map.has(t.columnId)) map.set(t.columnId, []);
       map.get(t.columnId)!.push(t);
     }
@@ -186,19 +167,18 @@ export function Board({ columns, categories, initialTasks, users }: Props) {
               key={col.id}
               column={col}
               tasks={grouped.get(col.id) ?? []}
-              childrenByParent={childrenByParent}
-              columnName={columnName}
-              users={users}
-              categories={categories}
               onOpenTask={setOpenTaskId}
-              onAddSubtask={setSubParent}
               onStartAdd={() => setCreateCol(col.id)}
             />
           ))}
         </div>
 
         <DragOverlay>
-          {activeTask ? <TaskCard task={activeTask} onOpen={() => {}} overlay /> : null}
+          {activeTask ? (
+            <div className="w-64">
+              <TaskCard task={activeTask} onOpen={() => {}} overlay />
+            </div>
+          ) : null}
         </DragOverlay>
       </DndContext>
 
@@ -212,28 +192,14 @@ export function Board({ columns, categories, initialTasks, users }: Props) {
         />
       )}
 
-      {subParent && (
-        <CreateTaskModal
-          columns={columns}
-          categories={categories}
-          defaultColumnId={subParent.columnId}
-          parent={subParent}
-          onClose={() => setSubParent(null)}
-          onCreated={(t) => upsertTask(t)}
-        />
-      )}
-
       {openTask && (
         <TaskModal
           task={openTask}
           columns={columns}
           categories={categories}
           users={users}
-          subtasks={childrenByParent.get(openTask.id) ?? []}
           doneColumnId={columns[columns.length - 1]?.id}
           onClose={() => setOpenTaskId(null)}
-          onOpenSubtask={setOpenTaskId}
-          onAddSubtask={() => setSubParent(openTask)}
           onChange={upsertTask}
           onDelete={() => removeTask(openTask.id)}
           onArchive={() => removeTask(openTask.id)}

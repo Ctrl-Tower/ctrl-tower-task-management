@@ -30,7 +30,6 @@ export function toTaskDTO(t: any): TaskDTO {
     dueDate: t.dueDate ? t.dueDate.toISOString() : null,
     columnId: t.columnId,
     categoryId: t.categoryId,
-    parentId: t.parentId ?? null,
     completedAt: t.completedAt ? t.completedAt.toISOString() : null,
     archivedAt: t.archivedAt ? t.archivedAt.toISOString() : null,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

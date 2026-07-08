@@ -7,6 +7,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { AccountModal } from "@/components/AccountModal";
 import { ImportModal } from "@/components/import/ImportModal";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { BoardControls } from "@/components/board/board-prefs";
 import type { UserDTO } from "@/lib/types";
 
 const LINKS = [
@@ -53,6 +54,7 @@ export function NavBar({ user }: { user: UserDTO }) {
       </div>
       <div className="flex items-center gap-3">
         <ThemeToggle />
+        {pathname === "/" && <BoardControls />}
         <button onClick={() => setImportOpen(true)} className="btn-ghost border border-neutral-700 text-xs">
           Import notes
         </button>

@@ -20,11 +20,8 @@ interface Props {
   columns: ColumnDTO[];
   categories: CategoryDTO[];
   users: UserDTO[];
-  subtasks?: TaskDTO[];
   doneColumnId?: string;
   onClose: () => void;
-  onOpenSubtask?: (id: string) => void;
-  onAddSubtask?: () => void;
   onChange: (t: TaskDTO) => void;
   onDelete: () => void;
   onArchive: () => void;
@@ -46,8 +43,7 @@ function normalizeUrl(url: string): string {
   return /^https?:\/\//i.test(u) ? u : `https://${u}`;
 }
 
-export function TaskModal({ task, columns, categories, users, subtasks = [], doneColumnId, onClose, onOpenSubtask, onAddSubtask, onChange, onDelete, onArchive }: Props) {
-  const columnName = (id: string) => columns.find((c) => c.id === id)?.name ?? "";
+export function TaskModal({ task, columns, categories, users, doneColumnId, onClose, onChange, onDelete, onArchive }: Props) {
   // ---- staged draft state ----
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description ?? "");
@@ -219,40 +215,6 @@ export function TaskModal({ task, columns, categories, users, subtasks = [], don
                   placeholder="Add a description…"
                   className="input min-h-[76px] resize-y"
                 />
-              </section>
-
-              {/* Subtasks */}
-              <section>
-                <div className="mb-2 flex items-center justify-between">
-                  <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
-                    Subtasks{subtasks.length > 0 && ` · ${subtasks.filter((s) => s.completedAt).length}/${subtasks.length}`}
-                  </h3>
-                  {onAddSubtask && (
-                    <button onClick={onAddSubtask} className="btn-ghost text-xs">+ Add subtask</button>
-                  )}
-                </div>
-                {subtasks.length === 0 ? (
-                  <p className="text-xs text-neutral-600">No subtasks yet.</p>
-                ) : (
-                  <div className="space-y-1">
-                    {subtasks.map((s) => (
-                      <button
-                        key={s.id}
-                        onClick={() => onOpenSubtask?.(s.id)}
-                        className="flex w-full items-center gap-2 rounded-md border border-neutral-800 bg-neutral-900 px-2 py-1.5 text-left hover:border-neutral-600"
-                      >
-                        <span className={`min-w-0 flex-1 truncate text-sm ${s.completedAt ? "text-neutral-500 line-through" : "text-neutral-200"}`}>
-                          {s.title}
-                        </span>
-                        <span className="shrink-0 rounded bg-neutral-800 px-1.5 py-px text-[10px] uppercase tracking-wide text-neutral-400">
-                          {columnName(s.columnId)}
-                        </span>
-                        <span className="shrink-0 rounded bg-neutral-700 px-1 py-px text-[10px] font-semibold text-neutral-200">{s.priority}</span>
-                        {s.assignees.length > 0 && <Avatar user={s.assignees[0]} size={18} />}
-                      </button>
-                    ))}
-                  </div>
-                )}
               </section>
 
               {/* Links */}
