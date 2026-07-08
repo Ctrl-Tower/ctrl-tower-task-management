@@ -80,6 +80,11 @@ model Task {
   createdById String?
   createdBy   User?   @relation("TaskCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
 
+  // Subtasks: a task may nest under a parent. Deleting a parent deletes its children.
+  parentId String?
+  parent   Task?   @relation("Subtasks", fields: [parentId], references: [id], onDelete: Cascade)
+  children Task[]  @relation("Subtasks")
+
   assignees TaskAssignee[]
   notes     Note[]
   links     Link[]
@@ -89,6 +94,7 @@ model Task {
 
   @@index([columnId, categoryId, position])
   @@index([archivedAt])
+  @@index([parentId])
 }
 
 // Simple key/value store for board-wide configuration (e.g. archiveAfterDays).

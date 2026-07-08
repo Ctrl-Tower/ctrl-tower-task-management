@@ -10,6 +10,9 @@ interface Proposal {
   priority: Priority;
   columnId: string;
   categoryId: string;
+  dueDate: string;
+  parentId: string;
+  parentTitle: string;
   assigneeIds: string[];
   selected: boolean;
 }
@@ -54,6 +57,9 @@ export function ImportModal({ onClose }: { onClose: () => void }) {
         priority: t.priority,
         columnId: t.columnId || columns[0]?.id || "",
         categoryId: t.categoryId || categories[0]?.id || "",
+        dueDate: t.dueDate ?? "",
+        parentId: t.parentId ?? "",
+        parentTitle: t.parentTitle ?? "",
         assigneeIds: t.assigneeIds ?? [],
         selected: true,
       })));
@@ -98,6 +104,8 @@ export function ImportModal({ onClose }: { onClose: () => void }) {
             columnId: t.columnId || columns[0]?.id,
             categoryId: t.categoryId || categories[0]?.id,
             priority: t.priority,
+            dueDate: t.dueDate || null,
+            parentId: t.parentId || null,
           }),
         });
         if (res.ok && t.assigneeIds.length > 0) {
@@ -169,6 +177,9 @@ export function ImportModal({ onClose }: { onClose: () => void }) {
                       onChange={(e) => update(i, { title: e.target.value })}
                       className="w-full bg-transparent text-sm font-medium text-neutral-100 focus:outline-none"
                     />
+                    {t.parentTitle && (
+                      <p className="truncate text-[11px] text-neutral-500">↳ subtask of “{t.parentTitle}”</p>
+                    )}
                     <div className="flex flex-wrap items-center gap-2">
                       <select
                         value={t.columnId}
@@ -197,6 +208,13 @@ export function ImportModal({ onClose }: { onClose: () => void }) {
                           <option key={p} value={p}>{p}</option>
                         ))}
                       </select>
+                      <input
+                        type="date"
+                        value={t.dueDate}
+                        onChange={(e) => update(i, { dueDate: e.target.value })}
+                        title="Due date"
+                        className="rounded border border-neutral-700 bg-neutral-900 px-1.5 py-0.5 text-xs text-neutral-300"
+                      />
                     </div>
                     {users.length > 0 && (
                       <div className="flex flex-wrap items-center gap-1">

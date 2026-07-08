@@ -25,6 +25,13 @@ export async function POST(req: NextRequest) {
     // If created straight into the Complete column, start its completion clock.
     const doneColumnId = await getDoneColumnId();
 
+    // Accept a due date as either a full ISO string or a YYYY-MM-DD (stored at UTC midnight).
+    let dueDate: Date | null = null;
+    if (typeof body.dueDate === "string" && body.dueDate.trim()) {
+      const parsed = new Date(/^\d{4}-\d{2}-\d{2}$/.test(body.dueDate) ? `${body.dueDate}T00:00:00.000Z` : body.dueDate);
+      if (!isNaN(parsed.getTime())) dueDate = parsed;
+    }
+
     const task = await prisma.task.create({
       data: {
         title,
@@ -32,7 +39,9 @@ export async function POST(req: NextRequest) {
         priority: body.priority || "P2",
         columnId: body.columnId,
         categoryId: body.categoryId,
+        parentId: typeof body.parentId === "string" && body.parentId ? body.parentId : null,
         position,
+        dueDate,
         createdById: user.id,
         completedAt: body.columnId === doneColumnId ? new Date() : null,
       },

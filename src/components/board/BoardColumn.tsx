@@ -12,15 +12,18 @@ type SortMode = "priority" | "due" | "manual";
 interface Props {
   column: ColumnDTO;
   tasks: TaskDTO[];
+  childrenByParent: Map<string, TaskDTO[]>;
+  columnName: (id: string) => string;
   users: UserDTO[];
   categories: CategoryDTO[];
   onOpenTask: (id: string) => void;
+  onAddSubtask: (parent: TaskDTO) => void;
   onStartAdd: () => void;
 }
 
 const PRIORITY_RANK: Record<Priority, number> = { P0: 0, P1: 1, P2: 2, P3: 3 };
 
-export function BoardColumn({ column, tasks, users, categories, onOpenTask, onStartAdd }: Props) {
+export function BoardColumn({ column, tasks, childrenByParent, columnName, users, categories, onOpenTask, onAddSubtask, onStartAdd }: Props) {
   const { setNodeRef, isOver } = useDroppable({ id: colDropId(column.id) });
   const [open, setOpen] = useState(false);
   const [sort, setSort] = useState<SortMode>("priority");
@@ -167,7 +170,15 @@ export function BoardColumn({ column, tasks, users, categories, onOpenTask, onSt
       >
         <SortableContext items={visible.map((t) => t.id)} strategy={verticalListSortingStrategy}>
           {visible.map((t) => (
-            <TaskCard key={t.id} task={t} onOpen={() => onOpenTask(t.id)} />
+            <TaskCard
+              key={t.id}
+              task={t}
+              subtasks={childrenByParent.get(t.id) ?? []}
+              columnName={columnName}
+              onOpen={() => onOpenTask(t.id)}
+              onOpenSubtask={onOpenTask}
+              onAddSubtask={() => onAddSubtask(t)}
+            />
           ))}
         </SortableContext>
       </div>

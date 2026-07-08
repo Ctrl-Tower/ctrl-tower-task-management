@@ -8,15 +8,16 @@ interface Props {
   columns: ColumnDTO[];
   categories: CategoryDTO[];
   defaultColumnId: string;
+  parent?: TaskDTO; // when set, the new task is created as a subtask of this task
   onClose: () => void;
   onCreated: (t: TaskDTO) => void;
 }
 
-export function CreateTaskModal({ columns, categories, defaultColumnId, onClose, onCreated }: Props) {
+export function CreateTaskModal({ columns, categories, defaultColumnId, parent, onClose, onCreated }: Props) {
   const [title, setTitle] = useState("");
-  const [columnId, setColumnId] = useState(defaultColumnId);
-  const [categoryId, setCategoryId] = useState(categories[0]?.id ?? "");
-  const [priority, setPriority] = useState<Priority>("P2");
+  const [columnId, setColumnId] = useState(parent?.columnId ?? defaultColumnId);
+  const [categoryId, setCategoryId] = useState(parent?.categoryId ?? categories[0]?.id ?? "");
+  const [priority, setPriority] = useState<Priority>(parent?.priority ?? "P2");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,7 +37,7 @@ export function CreateTaskModal({ columns, categories, defaultColumnId, onClose,
       const res = await fetch("/api/tasks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: t, columnId, categoryId, priority }),
+        body: JSON.stringify({ title: t, columnId, categoryId, priority, parentId: parent?.id ?? null }),
       });
       if (res.ok) {
         onCreated(await res.json());
@@ -53,7 +54,10 @@ export function CreateTaskModal({ columns, categories, defaultColumnId, onClose,
     <Modal open onClose={onClose} width="max-w-md">
       <div className="flex flex-col">
         <div className="flex items-center justify-between border-b border-neutral-800 px-5 py-4">
-          <h2 className="text-base font-semibold text-neutral-100">New task</h2>
+          <div>
+            <h2 className="text-base font-semibold text-neutral-100">{parent ? "New subtask" : "New task"}</h2>
+            {parent && <p className="mt-0.5 truncate text-xs text-neutral-500">under “{parent.title}”</p>}
+          </div>
           <button onClick={onClose} className="btn-ghost px-2 py-1 text-lg leading-none">✕</button>
         </div>
 
