@@ -14,12 +14,10 @@ function dueLabel(iso: string): { text: string; overdue: boolean } {
 
 export function TaskCard({
   task,
-  categoryName,
   onOpen,
   overlay = false,
 }: {
   task: TaskDTO;
-  categoryName?: string;
   onOpen: () => void;
   overlay?: boolean;
 }) {
@@ -35,7 +33,7 @@ export function TaskCard({
   };
 
   const due = task.dueDate ? dueLabel(task.dueDate) : null;
-  const showPriority = task.priority === "P0" || task.priority === "P1";
+  const hasMeta = task.assignees.length > 0 || due || task.links.length > 0 || task.notes.length > 0;
 
   return (
     <div
@@ -44,26 +42,21 @@ export function TaskCard({
       {...attributes}
       {...listeners}
       onClick={onOpen}
-      className={`cursor-grab touch-none rounded-md border border-slate-700 bg-slate-800 p-2.5 text-sm shadow-sm transition-colors hover:border-slate-500 active:cursor-grabbing ${
-        overlay ? "shadow-xl ring-1 ring-slate-500" : ""
+      className={`cursor-grab touch-none rounded-md border border-neutral-700 bg-neutral-800 p-2 text-sm transition-colors hover:border-neutral-500 active:cursor-grabbing ${
+        overlay ? "shadow-xl ring-1 ring-neutral-500" : ""
       }`}
     >
-      {categoryName && (
-        <span className="mb-1.5 inline-block rounded border border-slate-600 px-1.5 py-px text-[10px] font-medium uppercase tracking-wide text-slate-300">
-          {categoryName}
+      <div className="flex items-start justify-between gap-2">
+        <p className="min-w-0 flex-1 font-medium leading-snug text-neutral-100">{task.title}</p>
+        <span className="shrink-0 rounded bg-neutral-700 px-1 py-px text-[10px] font-semibold uppercase tracking-wide text-neutral-200">
+          {task.priority}
         </span>
-      )}
-      <p className="font-medium leading-snug text-slate-100">{task.title}</p>
+      </div>
 
-      {(task.assignees.length > 0 || due || task.links.length > 0 || task.notes.length > 0 || showPriority) && (
-        <div className="mt-2 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 text-[11px] text-slate-400">
-            {showPriority && (
-              <span className="rounded bg-slate-700 px-1 py-px text-[10px] font-semibold uppercase tracking-wide text-slate-200">
-                {task.priority}
-              </span>
-            )}
-            {due && <span className={due.overdue ? "font-semibold text-slate-200" : ""}>{due.text}</span>}
+      {hasMeta && (
+        <div className="mt-1.5 flex items-center justify-between gap-2 text-[11px] text-neutral-400">
+          <div className="flex items-center gap-2">
+            {due && <span className={due.overdue ? "font-semibold text-neutral-200" : ""}>{due.text}</span>}
             {task.links.length > 0 && <span>{task.links.length} link{task.links.length > 1 ? "s" : ""}</span>}
             {task.notes.length > 0 && <span>{task.notes.length} note{task.notes.length > 1 ? "s" : ""}</span>}
           </div>

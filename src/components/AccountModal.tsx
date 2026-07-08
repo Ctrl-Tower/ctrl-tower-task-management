@@ -79,10 +79,10 @@ export function AccountModal({ user, onClose }: { user: UserDTO; onClose: () => 
   return (
     <Modal open onClose={onClose} width="max-w-sm">
       <div className="flex flex-col">
-        <div className="flex items-center justify-between border-b border-slate-800 px-5 py-4">
+        <div className="flex items-center justify-between border-b border-neutral-800 px-5 py-4">
           <div className="flex items-center gap-2">
             <Avatar user={user} size={28} />
-            <span className="text-base font-semibold text-slate-100">Your account</span>
+            <span className="text-base font-semibold text-neutral-100">Your account</span>
           </div>
           <button onClick={onClose} className="btn-ghost px-2 py-1 text-lg leading-none">✕</button>
         </div>
@@ -90,21 +90,21 @@ export function AccountModal({ user, onClose }: { user: UserDTO; onClose: () => 
         <div className="space-y-6 p-5">
           {/* Name */}
           <section className="space-y-2">
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">Display name</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Display name</h3>
             <div className="flex gap-2">
               <input className="input flex-1" value={name} onChange={(e) => setName(e.target.value)} />
               <button onClick={saveName} disabled={nameBusy || !name.trim() || name.trim() === user.name} className="btn-primary text-sm">
                 {nameBusy ? "…" : "Save"}
               </button>
             </div>
-            {nameMsg && <p className="text-xs text-slate-400">{nameMsg}</p>}
+            {nameMsg && <p className="text-xs text-neutral-400">{nameMsg}</p>}
           </section>
 
           {/* Password */}
-          <section className="space-y-3 border-t border-slate-800 pt-5">
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">Change password</h3>
+          <section className="space-y-3 border-t border-neutral-800 pt-5">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Change password</h3>
             {pwDone ? (
-              <p className="rounded-md border border-slate-700 bg-slate-800/60 px-3 py-2 text-sm text-slate-200">
+              <p className="rounded-md border border-neutral-700 bg-neutral-800/60 px-3 py-2 text-sm text-neutral-200">
                 Password updated. Use it next time you sign in.
               </p>
             ) : (
@@ -121,7 +121,7 @@ export function AccountModal({ user, onClose }: { user: UserDTO; onClose: () => 
                   <label className="label">Confirm new password</label>
                   <input type="password" autoComplete="new-password" className="input" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
                 </div>
-                {pwError && <p className="text-sm text-slate-300">{pwError}</p>}
+                {pwError && <p className="text-sm text-neutral-300">{pwError}</p>}
                 <button onClick={savePassword} disabled={pwBusy} className="btn-primary text-sm">
                   {pwBusy ? "Saving…" : "Update password"}
                 </button>
@@ -130,8 +130,8 @@ export function AccountModal({ user, onClose }: { user: UserDTO; onClose: () => 
           </section>
         </div>
 
-        <div className="flex items-center justify-end border-t border-slate-800 bg-slate-900/60 px-5 py-3">
-          <button onClick={onClose} className="btn-ghost border border-slate-700 text-sm">Close</button>
+        <div className="flex items-center justify-end border-t border-neutral-800 bg-neutral-900/60 px-5 py-3">
+          <button onClick={onClose} className="btn-ghost border border-neutral-700 text-sm">Close</button>
         </div>
       </div>
     </Modal>

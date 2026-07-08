@@ -52,8 +52,8 @@ export function CreateTaskModal({ columns, categories, defaultColumnId, onClose,
   return (
     <Modal open onClose={onClose} width="max-w-md">
       <div className="flex flex-col">
-        <div className="flex items-center justify-between border-b border-slate-800 px-5 py-4">
-          <h2 className="text-base font-semibold text-slate-100">New task</h2>
+        <div className="flex items-center justify-between border-b border-neutral-800 px-5 py-4">
+          <h2 className="text-base font-semibold text-neutral-100">New task</h2>
           <button onClick={onClose} className="btn-ghost px-2 py-1 text-lg leading-none">✕</button>
         </div>
 
@@ -105,8 +105,8 @@ export function CreateTaskModal({ columns, categories, defaultColumnId, onClose,
                   onClick={() => setPriority(p)}
                   className={`rounded-md py-1.5 text-xs font-semibold transition-colors ${
                     priority === p
-                      ? "bg-slate-100 text-slate-900"
-                      : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200"
+                      ? "bg-neutral-100 text-neutral-900"
+                      : "bg-neutral-800 text-neutral-400 hover:bg-neutral-700 hover:text-neutral-200"
                   }`}
                 >
                   {p}
@@ -115,11 +115,11 @@ export function CreateTaskModal({ columns, categories, defaultColumnId, onClose,
             </div>
           </div>
 
-          {error && <p className="text-sm text-slate-300">{error}</p>}
+          {error && <p className="text-sm text-neutral-300">{error}</p>}
         </div>
 
-        <div className="flex items-center justify-end gap-2 border-t border-slate-800 bg-slate-900/60 px-5 py-3">
-          <button onClick={onClose} disabled={busy} className="btn-ghost border border-slate-700 text-sm">Cancel</button>
+        <div className="flex items-center justify-end gap-2 border-t border-neutral-800 bg-neutral-900/60 px-5 py-3">
+          <button onClick={onClose} disabled={busy} className="btn-ghost border border-neutral-700 text-sm">Cancel</button>
           <button onClick={create} disabled={busy} className="btn-primary text-sm">
             {busy ? "Creating…" : "Create task"}
           </button>

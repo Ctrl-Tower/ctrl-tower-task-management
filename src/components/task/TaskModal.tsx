@@ -42,7 +42,7 @@ export function TaskModal({ task, columns, categories, users, doneColumnId, onCl
   const [description, setDescription] = useState(task.description ?? "");
   const [priority, setPriority] = useState<Priority>(task.priority);
   const [columnId, setColumnId] = useState(task.columnId);
-  const [categoryId, setCategoryId] = useState(task.categoryId);
+  const [categoryId, setCategoryId] = useState<string | null>(task.categoryId);
   const [startDate, setStartDate] = useState(toDateInput(task.startDate));
   const [dueDate, setDueDate] = useState(toDateInput(task.dueDate));
   const [assigneeIds, setAssigneeIds] = useState<string[]>(task.assignees.map((a) => a.id));
@@ -174,18 +174,20 @@ export function TaskModal({ task, columns, categories, users, doneColumnId, onCl
       <Modal open onClose={handleClose} width="max-w-3xl">
         <div className="flex max-h-[88vh] flex-col">
           {/* Header */}
-          <div className="flex items-start gap-3 border-b border-slate-800 px-5 py-4">
+          <div className="flex items-start gap-3 border-b border-neutral-800 px-5 py-4">
             <div className="min-w-0 flex-1">
               <div className="mb-1.5 flex flex-wrap items-center gap-1.5 text-[10px] font-medium uppercase tracking-wide">
-                <span className="rounded border border-slate-700 px-1.5 py-px text-slate-400">{statusLabel}</span>
-                <span className="rounded border border-slate-700 px-1.5 py-px text-slate-400">{categoryLabel}</span>
+                <span className="rounded border border-neutral-700 px-1.5 py-px text-neutral-400">{statusLabel}</span>
+                {categoryLabel && (
+                  <span className="rounded border border-neutral-700 px-1.5 py-px text-neutral-400">{categoryLabel}</span>
+                )}
               </div>
               <textarea
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 rows={1}
                 placeholder="Untitled task"
-                className="-mx-2 w-[calc(100%+1rem)] resize-none rounded-md bg-transparent px-2 py-0.5 text-xl font-semibold text-slate-100 placeholder-slate-600 transition-colors hover:bg-slate-800/50 focus:bg-slate-800/60 focus:outline-none"
+                className="-mx-2 w-[calc(100%+1rem)] resize-none rounded-md bg-transparent px-2 py-0.5 text-xl font-semibold text-neutral-100 placeholder-neutral-600 transition-colors hover:bg-neutral-800/50 focus:bg-neutral-800/60 focus:outline-none"
               />
             </div>
             <button onClick={handleClose} className="btn-ghost shrink-0 px-2 py-1 text-lg leading-none">
@@ -198,7 +200,7 @@ export function TaskModal({ task, columns, categories, users, doneColumnId, onCl
             <div className="space-y-6 p-5">
               {/* Description */}
               <section>
-                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Description</h3>
+                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">Description</h3>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -210,26 +212,26 @@ export function TaskModal({ task, columns, categories, users, doneColumnId, onCl
 
               {/* Links */}
               <section>
-                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Links</h3>
+                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">Links</h3>
                 <ul className="space-y-1.5">
                   {links.map((l) => {
                     const key = l.id ?? l.tmpId!;
                     return (
-                      <li key={key} className="group flex items-center gap-2.5 rounded-md border border-slate-800 bg-slate-800/40 px-2.5 py-2 text-sm">
-                        <span className="rounded bg-slate-700/70 px-1 py-px text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                      <li key={key} className="group flex items-center gap-2.5 rounded-md border border-neutral-800 bg-neutral-800/40 px-2.5 py-2 text-sm">
+                        <span className="rounded bg-neutral-700/70 px-1 py-px text-[10px] font-semibold uppercase tracking-wide text-neutral-400">
                           {l.kind === "GITHUB" ? "git" : "url"}
                         </span>
                         <a
                           href={l.url}
                           target="_blank"
                           rel="noreferrer"
-                          className="flex-1 truncate text-slate-200 hover:text-white hover:underline"
+                          className="flex-1 truncate text-neutral-200 hover:text-white hover:underline"
                         >
                           {l.label || l.url}
                         </a>
                         <button
                           onClick={() => unstageLink(key)}
-                          className="text-slate-600 opacity-0 transition-opacity hover:text-slate-200 group-hover:opacity-100"
+                          className="text-neutral-600 opacity-0 transition-opacity hover:text-neutral-200 group-hover:opacity-100"
                           aria-label="Remove link"
                         >
                           ✕
@@ -238,7 +240,7 @@ export function TaskModal({ task, columns, categories, users, doneColumnId, onCl
                     );
                   })}
                   {links.length === 0 && (
-                    <li className="rounded-md border border-dashed border-slate-800 px-2.5 py-2 text-sm text-slate-600">
+                    <li className="rounded-md border border-dashed border-neutral-800 px-2.5 py-2 text-sm text-neutral-600">
                       No links yet.
                     </li>
                   )}
@@ -258,37 +260,37 @@ export function TaskModal({ task, columns, categories, users, doneColumnId, onCl
                     className="input sm:w-36"
                     onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), stageLink())}
                   />
-                  <button onClick={stageLink} className="btn-ghost border border-slate-700">Add</button>
+                  <button onClick={stageLink} className="btn-ghost border border-neutral-700">Add</button>
                 </div>
               </section>
 
               {/* Progress notes */}
               <section>
-                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Progress notes</h3>
+                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">Progress notes</h3>
                 <div className="space-y-2">
                   {notes.map((n) => {
                     const key = n.id ?? n.tmpId!;
                     return (
-                      <div key={key} className="group rounded-md border border-slate-800 bg-slate-800/40 p-3">
-                        <div className="mb-1.5 flex items-center gap-2 text-xs text-slate-400">
+                      <div key={key} className="group rounded-md border border-neutral-800 bg-neutral-800/40 p-3">
+                        <div className="mb-1.5 flex items-center gap-2 text-xs text-neutral-400">
                           {n.author && <Avatar user={n.author} size={18} />}
-                          <span className="font-medium text-slate-300">{n.author?.name ?? "You"}</span>
-                          <span className="text-slate-600">·</span>
+                          <span className="font-medium text-neutral-300">{n.author?.name ?? "You"}</span>
+                          <span className="text-neutral-600">·</span>
                           <span>{n.tmpId ? "unsaved" : new Date(n.createdAt).toLocaleString()}</span>
                           <button
                             onClick={() => unstageNote(key)}
-                            className="ml-auto text-slate-600 opacity-0 transition-opacity hover:text-slate-200 group-hover:opacity-100"
+                            className="ml-auto text-neutral-600 opacity-0 transition-opacity hover:text-neutral-200 group-hover:opacity-100"
                             aria-label="Remove note"
                           >
                             ✕
                           </button>
                         </div>
-                        <p className="whitespace-pre-wrap text-sm text-slate-200">{n.body}</p>
+                        <p className="whitespace-pre-wrap text-sm text-neutral-200">{n.body}</p>
                       </div>
                     );
                   })}
                   {notes.length === 0 && (
-                    <p className="rounded-md border border-dashed border-slate-800 px-2.5 py-2 text-sm text-slate-600">
+                    <p className="rounded-md border border-dashed border-neutral-800 px-2.5 py-2 text-sm text-neutral-600">
                       No notes yet.
                     </p>
                   )}
@@ -304,13 +306,13 @@ export function TaskModal({ task, columns, categories, users, doneColumnId, onCl
                     placeholder="Add a progress note… (⌘/Ctrl+Enter)"
                     className="input resize-y"
                   />
-                  <button onClick={stageNote} className="btn-ghost self-end border border-slate-700">Add</button>
+                  <button onClick={stageNote} className="btn-ghost self-end border border-neutral-700">Add</button>
                 </div>
               </section>
             </div>
 
             {/* Sidebar */}
-            <aside className="space-y-5 border-t border-slate-800 bg-slate-900/40 p-5 md:border-l md:border-t-0">
+            <aside className="space-y-5 border-t border-neutral-800 bg-neutral-900/40 p-5 md:border-l md:border-t-0">
               <div>
                 <label className="label">Status</label>
                 <select className="input" value={columnId} onChange={(e) => setColumnId(e.target.value)}>
@@ -330,8 +332,8 @@ export function TaskModal({ task, columns, categories, users, doneColumnId, onCl
                       onClick={() => setPriority(p)}
                       className={`rounded-md py-1.5 text-xs font-semibold transition-colors ${
                         priority === p
-                          ? "bg-slate-100 text-slate-900"
-                          : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200"
+                          ? "bg-neutral-100 text-neutral-900"
+                          : "bg-neutral-800 text-neutral-400 hover:bg-neutral-700 hover:text-neutral-200"
                       }`}
                     >
                       {p}
@@ -342,7 +344,8 @@ export function TaskModal({ task, columns, categories, users, doneColumnId, onCl
 
               <div>
                 <label className="label">Category</label>
-                <select className="input" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
+                <select className="input" value={categoryId ?? ""} onChange={(e) => setCategoryId(e.target.value || null)}>
+                  <option value="">No category</option>
                   {categories.map((c) => (
                     <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
@@ -353,26 +356,26 @@ export function TaskModal({ task, columns, categories, users, doneColumnId, onCl
                 <label className="label">Assignees</label>
                 <div className="mb-2 flex flex-wrap gap-1">
                   {assignedUsers.map((a) => (
-                    <span key={a.id} className="flex items-center gap-1 rounded-full bg-slate-800 py-0.5 pl-0.5 pr-2 text-xs text-slate-200">
+                    <span key={a.id} className="flex items-center gap-1 rounded-full bg-neutral-800 py-0.5 pl-0.5 pr-2 text-xs text-neutral-200">
                       <Avatar user={a} size={18} />
                       {a.name}
                     </span>
                   ))}
-                  {assignedUsers.length === 0 && <span className="text-sm text-slate-500">Unassigned</span>}
+                  {assignedUsers.length === 0 && <span className="text-sm text-neutral-500">Unassigned</span>}
                 </div>
-                <button onClick={() => setAssigneeOpen((v) => !v)} className="btn-ghost border border-slate-700 text-xs">
+                <button onClick={() => setAssigneeOpen((v) => !v)} className="btn-ghost border border-neutral-700 text-xs">
                   {assigneeOpen ? "Done" : "Edit assignees"}
                 </button>
                 {assigneeOpen && (
-                  <ul className="mt-2 max-h-40 space-y-1 overflow-y-auto rounded-md border border-slate-700 p-1">
+                  <ul className="mt-2 max-h-40 space-y-1 overflow-y-auto rounded-md border border-neutral-700 p-1">
                     {users.map((u) => (
                       <li key={u.id}>
-                        <label className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm hover:bg-slate-800">
+                        <label className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm hover:bg-neutral-800">
                           <input
                             type="checkbox"
                             checked={assignedIds.has(u.id)}
                             onChange={() => toggleAssignee(u.id)}
-                            className="accent-slate-400"
+                            className="accent-neutral-400"
                           />
                           <Avatar user={u} size={18} />
                           {u.name}
@@ -394,12 +397,12 @@ export function TaskModal({ task, columns, categories, users, doneColumnId, onCl
                 </div>
               </div>
 
-              <div className="space-y-1 border-t border-slate-800 pt-4">
+              <div className="space-y-1 border-t border-neutral-800 pt-4">
                 {isDone && (
                   <button
                     onClick={archive}
                     disabled={saving}
-                    className="w-full rounded-md border border-slate-700 py-2 text-xs font-medium text-slate-300 transition-colors hover:bg-slate-800 hover:text-white"
+                    className="w-full rounded-md border border-neutral-700 py-2 text-xs font-medium text-neutral-300 transition-colors hover:bg-neutral-800 hover:text-white"
                   >
                     Archive task
                   </button>
@@ -407,7 +410,7 @@ export function TaskModal({ task, columns, categories, users, doneColumnId, onCl
                 <button
                   onClick={() => setConfirmDelete(true)}
                   disabled={saving}
-                  className="w-full rounded-md py-2 text-xs font-medium text-slate-500 transition-colors hover:bg-slate-800 hover:text-slate-300"
+                  className="w-full rounded-md py-2 text-xs font-medium text-neutral-500 transition-colors hover:bg-neutral-800 hover:text-neutral-300"
                 >
                   Delete task
                 </button>
@@ -416,13 +419,13 @@ export function TaskModal({ task, columns, categories, users, doneColumnId, onCl
           </div>
 
           {/* Footer: Save / Cancel */}
-          <div className="flex items-center justify-between gap-3 border-t border-slate-800 bg-slate-900/60 px-5 py-3">
-            <span className="flex items-center gap-1.5 text-xs text-slate-500">
-              {dirty && <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />}
+          <div className="flex items-center justify-between gap-3 border-t border-neutral-800 bg-neutral-900/60 px-5 py-3">
+            <span className="flex items-center gap-1.5 text-xs text-neutral-500">
+              {dirty && <span className="h-1.5 w-1.5 rounded-full bg-neutral-400" />}
               {dirty ? "Unsaved changes" : "No changes"}
             </span>
             <div className="flex gap-2">
-              <button onClick={handleClose} disabled={saving} className="btn-ghost border border-slate-700 text-sm">
+              <button onClick={handleClose} disabled={saving} className="btn-ghost border border-neutral-700 text-sm">
                 Cancel
               </button>
               <button onClick={save} disabled={saving || !dirty} className="btn-primary text-sm">

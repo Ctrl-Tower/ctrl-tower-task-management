@@ -31,8 +31,8 @@ export function ArchiveSetting({ initialDays }: { initialDays: number }) {
   return (
     <section className="space-y-3">
       <div>
-        <h2 className="text-sm font-semibold text-slate-200">Auto-archive</h2>
-        <p className="text-xs text-slate-500">
+        <h2 className="text-sm font-semibold text-neutral-200">Auto-archive</h2>
+        <p className="text-xs text-neutral-500">
           Tasks left in the last column (Complete) for this many days are automatically archived and hidden from the board.
         </p>
       </div>
@@ -52,7 +52,7 @@ export function ArchiveSetting({ initialDays }: { initialDays: number }) {
         <button onClick={save} disabled={busy} className="btn-primary">
           {busy ? "Saving…" : "Save"}
         </button>
-        {status && <span className="pb-2 text-xs text-slate-400">{status}</span>}
+        {status && <span className="pb-2 text-xs text-neutral-400">{status}</span>}
       </div>
     </section>
   );

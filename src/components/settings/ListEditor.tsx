@@ -10,7 +10,7 @@ interface Item {
   position: number;
 }
 
-// Editor for board categories (swimlanes). Status columns are fixed and not editable here.
+// Editor for board categories (task labels). Status columns are fixed and not editable here.
 export function ListEditor({
   title,
   initial,
@@ -76,16 +76,16 @@ export function ListEditor({
   return (
     <section className="space-y-3">
       <div>
-        <h2 className="text-sm font-semibold text-slate-200">{title}</h2>
-        <p className="text-xs text-slate-500">Deleting a category removes all of its tasks.</p>
+        <h2 className="text-sm font-semibold text-neutral-200">{title}</h2>
+        <p className="text-xs text-neutral-500">Deleting a category leaves its tasks in place — they just become uncategorized.</p>
       </div>
 
       <div className="space-y-2">
         {items.map((item, idx) => (
           <div key={item.id} className="card-surface flex items-center gap-2 p-2">
             <div className="flex flex-col">
-              <button onClick={() => move(idx, -1)} disabled={idx === 0} className="px-1 text-xs text-slate-500 hover:text-slate-200 disabled:opacity-30">▲</button>
-              <button onClick={() => move(idx, 1)} disabled={idx === items.length - 1} className="px-1 text-xs text-slate-500 hover:text-slate-200 disabled:opacity-30">▼</button>
+              <button onClick={() => move(idx, -1)} disabled={idx === 0} className="px-1 text-xs text-neutral-500 hover:text-neutral-200 disabled:opacity-30">▲</button>
+              <button onClick={() => move(idx, 1)} disabled={idx === items.length - 1} className="px-1 text-xs text-neutral-500 hover:text-neutral-200 disabled:opacity-30">▼</button>
             </div>
 
             <input
@@ -120,7 +120,7 @@ export function ListEditor({
       <ConfirmDialog
         open={!!confirmItem}
         title={`Delete category “${confirmItem?.name ?? ""}”?`}
-        message="This permanently deletes the category and all of its tasks. This cannot be undone."
+        message="This removes the category. Its tasks stay on the board and become uncategorized."
         confirmLabel="Delete category"
         onConfirm={() => confirmItem && remove(confirmItem.id)}
         onClose={() => setConfirmItem(null)}

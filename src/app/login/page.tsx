@@ -35,14 +35,14 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-neutral-950 px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-slate-700 text-lg font-bold text-slate-100">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-neutral-700 text-lg font-bold text-neutral-100">
             CT
           </div>
-          <h1 className="text-xl font-semibold text-slate-100">Ctrl Tower</h1>
-          <p className="text-sm text-slate-400">Task Board — sign in</p>
+          <h1 className="text-xl font-semibold text-neutral-100">Ctrl Tower</h1>
+          <p className="text-sm text-neutral-400">Task Board — sign in</p>
         </div>
 
         <form onSubmit={onSubmit} className="card-surface space-y-4 p-6">
@@ -71,12 +71,12 @@ export default function LoginPage() {
             />
           </div>
 
-          {error && <p className="text-sm text-slate-300">{error}</p>}
+          {error && <p className="text-sm text-neutral-300">{error}</p>}
 
           <button type="submit" className="btn-primary w-full" disabled={loading}>
             {loading ? "Signing in…" : "Sign in"}
           </button>
-          <p className="text-center text-xs text-slate-500">
+          <p className="text-center text-xs text-neutral-500">
             Accounts are created by an administrator.
           </p>
         </form>

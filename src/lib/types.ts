@@ -47,7 +47,7 @@ export interface TaskDTO {
   startDate: string | null;
   dueDate: string | null;
   columnId: string;
-  categoryId: string;
+  categoryId: string | null;
   completedAt: string | null;
   archivedAt: string | null;
   assignees: UserDTO[];

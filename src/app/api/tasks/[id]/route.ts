@@ -77,7 +77,8 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: any = {};
     if (typeof body.title === "string") data.title = body.title.trim();
-    if (typeof body.categoryId === "string") data.categoryId = body.categoryId;
+    // categoryId may be a real id, or "" / null to clear it (uncategorized).
+    if (body.categoryId !== undefined) data.categoryId = body.categoryId || null;
     if (body.description !== undefined) data.description = body.description || null;
     if (typeof body.priority === "string") data.priority = body.priority;
     const sd = parseDate(body.startDate);

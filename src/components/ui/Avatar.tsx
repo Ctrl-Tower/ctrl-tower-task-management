@@ -11,7 +11,7 @@ export function Avatar({ user, size = 24 }: { user: UserDTO; size?: number }) {
   return (
     <span
       title={user.name}
-      className="inline-flex shrink-0 items-center justify-center rounded-full bg-slate-600 font-semibold text-slate-100 ring-1 ring-slate-900"
+      className="inline-flex shrink-0 items-center justify-center rounded-full bg-neutral-600 font-semibold text-neutral-100 ring-1 ring-neutral-900"
       style={{ width: size, height: size, fontSize: size * 0.4 }}
     >
       {initials(user.name)}
@@ -28,7 +28,7 @@ export function AvatarStack({ users, max = 4 }: { users: UserDTO[]; max?: number
         <Avatar key={u.id} user={u} />
       ))}
       {extra > 0 && (
-        <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-slate-700 text-[10px] font-semibold text-slate-200 ring-1 ring-slate-900">
+        <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-neutral-700 text-[10px] font-semibold text-neutral-200 ring-1 ring-neutral-900">
           +{extra}
         </span>
       )}

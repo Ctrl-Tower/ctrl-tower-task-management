@@ -5,6 +5,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Avatar } from "@/components/ui/Avatar";
 import { AccountModal } from "@/components/AccountModal";
+import { ImportModal } from "@/components/import/ImportModal";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import type { UserDTO } from "@/lib/types";
 
 const LINKS = [
@@ -18,6 +20,7 @@ export function NavBar({ user }: { user: UserDTO }) {
   const pathname = usePathname();
   const router = useRouter();
   const [accountOpen, setAccountOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
 
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -26,13 +29,10 @@ export function NavBar({ user }: { user: UserDTO }) {
   }
 
   return (
-    <header className="flex h-14 shrink-0 items-center justify-between border-b border-slate-800 bg-slate-900 px-4">
+    <header className="flex h-14 shrink-0 items-center justify-between border-b border-neutral-800 bg-neutral-900 px-4">
       <div className="flex items-center gap-6">
         <Link href="/" className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded bg-slate-700 text-xs font-bold text-slate-100">
-            CT
-          </span>
-          <span className="text-sm font-semibold text-slate-100">Task Board</span>
+          <span className="text-sm font-semibold text-neutral-100">Task Board</span>
         </Link>
         <nav className="flex items-center gap-1">
           {LINKS.map((l) => {
@@ -42,7 +42,7 @@ export function NavBar({ user }: { user: UserDTO }) {
                 key={l.href}
                 href={l.href}
                 className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                  active ? "bg-slate-800 text-slate-100" : "text-slate-400 hover:bg-slate-800/60 hover:text-slate-200"
+                  active ? "bg-neutral-800 text-neutral-100" : "text-neutral-400 hover:bg-neutral-800/60 hover:text-neutral-200"
                 }`}
               >
                 {l.label}
@@ -52,13 +52,17 @@ export function NavBar({ user }: { user: UserDTO }) {
         </nav>
       </div>
       <div className="flex items-center gap-3">
+        <ThemeToggle />
+        <button onClick={() => setImportOpen(true)} className="btn-ghost border border-neutral-700 text-xs">
+          Import notes
+        </button>
         <button
           onClick={() => setAccountOpen(true)}
-          className="flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-slate-800"
+          className="flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-neutral-800"
           title="Account & password"
         >
           <Avatar user={user} size={28} />
-          <span className="hidden text-sm text-slate-300 sm:block">{user.name}</span>
+          <span className="hidden text-sm text-neutral-300 sm:block">{user.name}</span>
         </button>
         <button onClick={logout} className="btn-ghost text-xs">
           Sign out
@@ -66,6 +70,7 @@ export function NavBar({ user }: { user: UserDTO }) {
       </div>
 
       {accountOpen && <AccountModal user={user} onClose={() => setAccountOpen(false)} />}
+      {importOpen && <ImportModal onClose={() => setImportOpen(false)} />}
     </header>
   );
 }

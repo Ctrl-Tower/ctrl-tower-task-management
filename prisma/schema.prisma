@@ -72,9 +72,10 @@ model Task {
   archivedAt  DateTime?
 
   columnId   String
-  column     Column   @relation(fields: [columnId], references: [id], onDelete: Cascade)
-  categoryId String
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  column     Column    @relation(fields: [columnId], references: [id], onDelete: Cascade)
+  // Deleting a category unlinks it from the task (the task survives, uncategorized).
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
   createdById String?
   createdBy   User?   @relation("TaskCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)

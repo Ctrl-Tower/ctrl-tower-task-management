@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireSession, UnauthorizedError } from "@/lib/auth";
 
-// POST /api/categories — create a swimlane category at the end.
+// POST /api/categories — create a category at the end.
 export async function POST(req: NextRequest) {
   try {
     await requireSession();
